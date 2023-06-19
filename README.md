@@ -1,6 +1,11 @@
-# Omni3D & Cube R-CNN
+# Omni3D & Cube R-CNN (ROS Integration)
 
 [![Support Ukraine](https://img.shields.io/badge/Support-Ukraine-FFD500?style=flat&labelColor=005BBB)](https://opensource.fb.com/support-ukraine)
+
+## ROS Node
+This is a modification to enable Cube R-CNN to be used in ROS (tested in ROS Noetic)
+
+* Note: Dependent on custom ros messages type (for publishing detections)
 
 **Omni3D: A Large Benchmark and Model for 3D Object Detection in the Wild**
 
