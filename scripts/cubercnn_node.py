@@ -49,7 +49,7 @@ CONFIG_FILE = "cubercnn://omni3d/cubercnn_DLA34_FPN.yaml"
 FOCAL_LENGTH = 0
 PRINCIPAL_POINT = []
 IMAGE_SIZE = (640, 480)
-THRESHOLD = 0.6
+THRESHOLD = 0.7
 MODEL_WEIGHTS = "cubercnn://omni3d/cubercnn_DLA34_FPN.pth"
 # OUTPUT_DIR = "output/demo"
 DISPLAY = False
@@ -132,13 +132,14 @@ class CubeRCNNNode(object):
         rospy.init_node("cubercnn_node", anonymous=True)
         # self.img_sub = rospy.Subscriber("/camera/color/image_raw", Image, self.img_callback)
         # message filter for image and camera_info (use exact time sync since image and camera_info are published at the same time)
-        self.img_sub = message_filters.Subscriber("/camera", Image)
+        self.img_sub = message_filters.Subscriber("/zed2/zed_node/rgb/image_rect_color", Image)
         self.info_sub = message_filters.Subscriber("/camera_info", CameraInfo)
         self.ts = message_filters.TimeSynchronizer([self.img_sub, self.info_sub], 10)
         self.ts.registerCallback(self.img_callback)
 
         self.objects_pub = rospy.Publisher("/objects", MarkerArray, queue_size=10)
         self.detections_pub = rospy.Publisher("/detections", Detections, queue_size=10)
+        self.detections_img_pub = rospy.Publisher("/detections_img", Image, queue_size=10)
 
         self.bridge = CvBridge()
 
@@ -281,7 +282,7 @@ class CubeRCNNNode(object):
                 
                 try:
                     im_drawn_rgb = im_drawn_rgb.astype(np.uint8)
-                    self.detections_pub.publish(self.bridge.cv2_to_imgmsg(im_drawn_rgb, "bgr8"))
+                    self.detections_img_pub.publish(self.bridge.cv2_to_imgmsg(im_drawn_rgb, "bgr8", header))
                 except CvBridgeError as e:
                     print(e)
 
